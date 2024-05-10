@@ -1,0 +1,17 @@
+{
+    "name": "dias/organizer",
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        },
+        "files": [
+            "app/functions/helpers.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "CaiqueJar",
+            "email": "caiquedm11@gmail.com"
+        }
+    ]
+}
