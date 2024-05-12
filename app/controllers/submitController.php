@@ -2,10 +2,14 @@
 
 use app\classes\ImageHandler;
 
-$images = $_FILES["imagem"];
+$images_array = $_FILES["imagem"];
 
 
+$target_path = __DIR__ . "/../../public/uploads/" . generate_folder_name(6) . "/";
+mkdir($target_path);
 
-$image = ImageHandler::organize($images);
+$images_object = ImageHandler::organize($images_array);
 
-dd($images);
+foreach ($images_object as $image) {
+    ImageHandler::save($image, $target_path, []);
+}

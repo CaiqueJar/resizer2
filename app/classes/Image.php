@@ -15,5 +15,16 @@ class Image {
         $this->type = $type;
         $this->size = $size;
     }
-    
+    public function getName($type = null) {
+        if($type != null) {
+            $name = explode('.', $this->name);
+            $name[1] = $type;
+            return implode('.', $name);
+        }
+
+        return $this->name;
+    }
+    public function getTmpName() {
+        return $this->tmp_name;
+    }
 }
