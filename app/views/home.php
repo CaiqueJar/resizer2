@@ -26,7 +26,7 @@
                 <div class="buttons">
                     <div class="input">
                         <label for="uploader-image" class="btn-uploader-image"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar imagem</label>
-                        <input type="file" name="" id="uploader-image">
+                        <input type="file" name="imagem[]" id="uploader-image">
                     </div>
                     <button class="btn" type="submit">Converter</button>
                 </div>
@@ -42,7 +42,7 @@
     <script>
         let counter = 1;
         $(document).ready(function() {
-            $('#uploader-image').change(function() {
+            $('#uploader-imageTESTE').change(function() {
 
                 let card = `
                     <div class="card-image" id="card-${counter}">
