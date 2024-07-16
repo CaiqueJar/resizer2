@@ -28,3 +28,7 @@ function asset($path) {
     $baseUrl = $_SERVER['HTTP_HOST'];
     return 'http://' . $baseUrl . '/' . ltrim($path, '/');
 }
+
+function redirectBack() {
+    header('Location: ' . $_SERVER['HTTP_REFERER']);
+}

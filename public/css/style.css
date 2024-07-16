@@ -78,20 +78,81 @@ main .btn-uploader-image {
 }
 main .card-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 42px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 32px;
 }
-main .card-image .img-wrapper {
-    padding: 40px;
-    text-align: center;
-    font-size: 4rem;
-    color: #fff;
-    background-color: rgb(60, 0, 128);
+main .card-image {
+    max-width: 240px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
-main .card-image .img-wrapper img {
-    display: none;
+main .card-image img {
+    width: 100%;
+    aspect-ratio: 240 / 240;
+    object-fit: cover;
 }
 main .card-grid .options {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+}
+main .card-grid .options .inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+main .card-grid .options .inputs input {
+    visibility: hidden;
+    display: none;
+}
+.modal-edit {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    max-width: 100%;
+    height: 100vh;
+    display: none;
+}
+.modal-edit.active {
+    display: block;
+}
+.modal-edit .overflow {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background-color: #000000cc;
+}
+.modal-edit .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.modal-edit .modal .header {
+    padding: 4px 20px;
+    position: relative;
+    border-bottom: #d7d7d7 1px solid;
+    background-color: #101010;
+    color: #fff;
+}
+.modal-edit .modal .header h3 {
+    font-weight: 500;
+}
+.modal-edit .modal .header span.close {
+    position: absolute;
+    top: 4px;
+    right: 20px;
+    cursor: pointer;
+}
+.modal-edit .modal .body {
+    padding: 4px 20px;
+}
+.modal-edit .modal .footer {
+    padding: 4px 20px;
+    background-color: #e1e1e1;
+    text-align: end;
 }
