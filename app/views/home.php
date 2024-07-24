@@ -10,13 +10,33 @@
 </head>
 
 <body>
+    <?php if (isset($_SESSION['download-zip-link'])) : ?>
+        <div class="modal-wrap modal-download" id="modal-download">
+            <div class="overflow close-fun"></div>
+            <div class="modal">
+                <div class="header">
+                    <h3>Arquivos estão prontos!</h3>
+                    <span class="close close-fun">✖</span>
+                </div>
+                <div class="body">
+                    <p>
+                        Faça o download do seu zip. <?= $_SESSION['download-zip-link'] ?>
+                    </p>
+                </div>
+                <div class="footer">
+                    <a id="download-btn" href="/download-zip" target="_blank">Baixar</a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <header>
         <h1>RES<span>IZER</span></h1>
     </header>
-    <main>  
-        <form action="/submit-images" method="POST" enctype="multipart/form-data">
+    <main>
+        <form class="upload-section" action="/submit-images" method="POST" enctype="multipart/form-data">
             <div class="">
-                <div class="drop-image-area">
+                <div for="uploader-image" class="drop-image-area">
                     <div class="text">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                         <p>Arraste e solte as imagens nesta área</p>
@@ -25,108 +45,108 @@
                 <div class="buttons">
                     <div class="input">
                         <label for="uploader-image" class="btn-uploader-image"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar imagem</label>
-                        <input type="file" id="uploader-image" accept="image/*">
+                        <input type="file" id="uploader-image" accept="image/*" multiple>
                     </div>
                     <button class="btn" type="submit">Converter</button>
                 </div>
             </div>
 
             <div class="card-grid" id="card-grid">
-                
+
             </div>
         </form>
     </main>
 
-    <div class="modal-edit" id="modal-edit">
-        <div class="overflow close-fun"></div>
-        <div class="modal">
-            <div class="header">
-                <h3>Deseja alterar os dados?</h3>
-                <span class="close close-fun">✖</span>
-            </div>
-            <div class="body">
-                <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis voluptatum eveniet tempora? Suscipit nihil voluptatum aperiam unde excepturi delectus tempore, est error assumenda repellendus natus provident accusamus quas eos itaque?
-                </p>
-            </div>
-            <div class="footer">
-                <button>Editar</button>
-            </div>
-        </div>
-    </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
     <script>
         let counter = 1;
         $(document).ready(function() {
             $('#uploader-image').change(function(e) {
+                const files = Array.from(e.target.files);
 
-                const [file] = e.target.files
-                    
-                let card = `
-                    <div class="card-image" id="card-${counter}">
-                        <img src="" id="card-img-${counter}" alt="">
+                files.forEach(file => {
+                    let currentCounter = counter;
+
+                    let card = `
+                    <div class="card-image" id="card-${currentCounter}">
+                        <img src="" id="card-img-${currentCounter}" alt="">
                         <div class="options">
                             <div class="inputs">
-                                <label for="image-input-${counter}">
+                                <label for="image-input-${currentCounter}">
                                     <i class="fa-solid fa-image"></i>
-                                    <input type="file" class="image-input" name="images[]" id="image-input-${counter}" data-id="${counter}">
+                                    <input type="file" class="image-input" name="images[]" id="image-input-${currentCounter}" data-id="${currentCounter}">
                                 </label>
-                                <i class="fa-solid fa-pen-to-square edit-btn"></i>
-                                <i class="fa-solid fa-trash del" data-id="${counter}"></i>
+                                <i class="fa-solid fa-trash del" data-id="${currentCounter}"></i>
                             </div>
-                            <select name="formats[]" id="format-input-${counter}">
+                            <select name="formats[]" id="format-input-${currentCounter}">
                                 <option value="webp">WEBP</option>
                                 <option value="jpeg">JPEG</option>
                                 <option value="png">PNG</option>
                             </select>
+                            <input type="text" name="width[]" id="width-${currentCounter}">
+                            <input type="text" name="height[]" id="height-${currentCounter}">
                         </div>
-
-                        
                     </div>
-                `;
+                    `;
 
-                $('#card-grid').append(card);
+                    $('#card-grid').append(card);
 
-                if (file) {
-                    $('#card-img-'+counter).attr('src', URL.createObjectURL(file));
-                }
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
+                    if (file) {
+                        let imageURL = URL.createObjectURL(file);
+                        $('#card-img-' + currentCounter).attr('src', imageURL);
 
-                document.getElementById(`image-input-${counter}`).files = dataTransfer.files;
 
-                counter++;
+                        let img = new Image();
+                        img.src = imageURL;
+
+                        img.onload = function() {
+                            let intrinsicWidth = img.naturalWidth;
+                            let intrinsicHeight = img.naturalHeight;
+
+                            $('#width-' + currentCounter).val(intrinsicWidth);
+                            $('#height-' + currentCounter).val(intrinsicHeight);
+                            
+                        };
+
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        document.getElementById(`image-input-${currentCounter}`).files = dataTransfer.files;
+                    }
+                    counter++;
+                });
 
                 preview_image();
-                edit_image();
                 delete_image();
             });
 
             function preview_image() {
-                $('.image-input').change(function(e) {
+                $(document).on('change', '.image-input', function(e) {
                     const [file] = e.target.files;
                     let id = $(this).attr('data-id');
-    
+
                     if (file) {
-                        $('#card-img-'+id).attr('src', URL.createObjectURL(file));
+                        let imageURL = URL.createObjectURL(file);
+                        $('#card-img-' + id).attr('src', imageURL);
                     }
                 });
             }
-            function edit_image() {
-                $('.edit-btn').click(function() {
-                    $('#modal-edit').toggleClass('active');
-                });
-                $('.close-fun').click(function() {
-                    $('#modal-edit').removeClass('active');
-                });
-            }
+
             function delete_image() {
-                $('.del').click(function () {
+                $(document).on('click', '.del', function() {
                     let id = $(this).attr('data-id');
-                    $('#card-'+id).remove();
+                    $('#card-' + id).remove();
                 });
             }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#download-btn').click(function() {
+                setTimeout(() => {
+                    location.reload();
+                }, 1);
+            });
         });
     </script>
 </body>

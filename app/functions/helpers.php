@@ -29,6 +29,12 @@ function asset($path) {
     return 'http://' . $baseUrl . '/' . ltrim($path, '/');
 }
 
+function redirect($destination) {
+    header('Location: ' . $destination);
+    exit();
+}
+
 function redirectBack() {
     header('Location: ' . $_SERVER['HTTP_REFERER']);
+    exit();
 }

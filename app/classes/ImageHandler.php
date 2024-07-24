@@ -6,21 +6,23 @@ use Imagick;
 
 class ImageHandler {
 
-    public static function organize($image_array, $options = null) {
+    public static function organize($image_array, $formats = null, $widths = null, $heights = null) {
         $image_names = $image_array['name'] ?? false;
         $type = $image_array['type'] ?? false;
         $tmp_names = $image_array['tmp_name'] ?? false;
         $size = $image_array['size'] ?? false;
-        $format = $options ?? false;
+        $formats = $formats ?? false;
+        $widths = $widths ?? 0;
+        $heights = $heights ?? 0;
 
-        if(!$image_names || !$type || !$tmp_names || !$size || !$format) {
+        if(!$image_names || !$type || !$tmp_names || !$size || !$formats) {
             throw new \Exception("Array de imagens inválido");
         }
 
-        $image_objects = array_map(function ($name, $type, $tmp_name, $size, $format) {
-            $image = new Image($name, $tmp_name, $type, $size, $format);
+        $image_objects = array_map(function ($name, $type, $tmp_name, $size, $formats, $widths, $heights) {
+            $image = new Image($name, $tmp_name, $type, $size, $formats, $widths, $heights);
             return $image;
-        }, $image_names, $type, $tmp_names, $size, $format);
+        }, $image_names, $type, $tmp_names, $size, $formats, $widths, $heights);
         
         return $image_objects;
     }
@@ -37,9 +39,13 @@ class ImageHandler {
 
             $imagick->setImageFormat($image->getFormat());
             $imagick->setImageCompressionQuality(90);
-            // $imagick->resizeImage(100, 100, Imagick::FILTER_POINT, 0);
+
+            $imagick->resizeImage($image->getWidth(), $image->getHeight(), Imagick::FILTER_CATROM, 0);
 
             $imagick->writeImage($path_image);
+
+            $imagick->clear();
+            $imagick->destroy();
 
             return true;
         }
